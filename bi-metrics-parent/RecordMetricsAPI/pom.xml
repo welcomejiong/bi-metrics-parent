@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.corps.bi</groupId>
+		<artifactId>bi-metrics-parent</artifactId>
+		<version>8.3.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>RecordMetricsAPI</artifactId>
+	<properties>
+		
+	</properties>
+	<build> 
+		<finalName>RecordMetricsAPI-${project.version}</finalName>
+	</build>
+	<dependencies>
+	
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-core-asl</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<scope>test</scope>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+			</dependency>
+			
+			<dependency>
+			  <groupId>org.apache.httpcomponents</groupId>
+			  <artifactId>httpmime</artifactId>
+			</dependency>
+		
+			<dependency>
+			  <groupId>commons-io</groupId>
+			  <artifactId>commons-io</artifactId>
+			</dependency>
+			
+			<dependency>
+			  <groupId>org.rocksdb</groupId>
+			  <artifactId>rocksdbjni</artifactId>
+			</dependency>
+			
+			<dependency>
+			  <groupId>org.corps.bi.datacenter</groupId>
+			  <artifactId>collect_metrics_core</artifactId>
+			  <version>${project.version}</version>
+			</dependency>
+		
+			<dependency>
+			  <groupId>org.corps.bi</groupId>
+			  <artifactId>RecordMetrics</artifactId>
+			  <version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+			  <groupId>org.corps.bi</groupId>
+			  <artifactId>RecordMetricsToProtoConverter</artifactId>
+			   <version>${project.version}</version>
+			</dependency>
+			
+			
+			
+	</dependencies>
+</project>

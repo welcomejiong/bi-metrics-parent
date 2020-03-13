@@ -1,0 +1,45 @@
+option java_multiple_files = true;
+option java_package = "org.corps.bi.protobuf.common";
+option java_outer_classname = "ToolsProto";
+
+package common;
+
+message SimpleListProto {
+	repeated bytes elements = 1;
+}
+
+message IntListProto {
+	repeated int32 elements = 1;
+}
+
+message LongListProto {
+	repeated int64 elements = 1;
+}
+
+message StringListProto {
+	repeated string elements = 1;
+}
+
+message StorageKeyProto{
+	 required int64 userId=1;
+	 required int64 busiFlag=2; 
+	 required int64 keyFlag=3;
+}
+
+message IntProto {
+	 required int32 value = 1;
+}
+
+message LongProto {
+	 required int64 value = 1;
+}
+
+message StringProto {
+	required string value = 1;
+}
+
+message KVProto {
+	required bytes k = 1;
+	required bytes v = 2;
+}
+

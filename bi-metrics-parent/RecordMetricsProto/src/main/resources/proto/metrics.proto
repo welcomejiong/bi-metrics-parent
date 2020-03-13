@@ -1,0 +1,290 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.corps.bi.metrics.protobuf";
+option java_outer_classname = "MetricsProto";
+
+package metrics;
+
+message MetaProto{
+	string metric=1;
+	string snId=2;
+	string gameId=3;
+	string ds=4;
+	string extra=5;
+}
+
+message DauProto {
+  //string gameId = 1;
+  string clientId = 2;
+  //string ds = 3;
+  string userId = 4;
+  string source = 5;
+  string affiliate = 6;
+  string creative = 7;
+  string family =8;
+  string genus =9;
+  string ip =10;
+  string dauDate=11;
+  string dauTime=12;
+  string fromUid=13;
+  string extra = 14;
+  int32 version=15;
+  string udid = 16;
+  string roleid = 17;
+}
+
+
+message InstallProto {
+  //string gameId = 1;
+  string clientId = 2;
+  //string ds = 3;
+  string userId = 4;
+  string source = 5;
+  string affiliate = 6;
+  string creative = 7;
+  string family =8;
+  string genus =9;
+  string fromUid=10;
+  string installDate=11;
+  string installTime=12;
+  string extra = 13;
+  int32 version=14;
+  string udid = 15;
+  string roleid = 16;
+}
+
+message CounterProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	string userLevel=5;
+	string counter=6;
+	string value=7;
+	string kingdom=8;
+	string phylum=9;
+	string classfield=10;
+	string family=11;
+	string genus=12;
+	string counterDate=13;
+	string counterTime=14;
+ 	string extra = 15;
+ 	int32 version=16;
+ 	string udid = 17;
+  	string roleid = 18;
+}
+
+message EconomyProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	/**
+	 * 游戏中的币种。
+	 * 例如coin、gold、honor、qpoint等虚拟或可获取或可花费的货币或者类货币。
+	 */
+	string currency =5;
+
+	/**
+	 * 用户花费的总数
+	 */
+	string amount =6; 
+
+	/**
+	 * 用户购买物品的数量
+	 */
+	string value =7;
+
+	string kingdom =8;
+
+	string phylum =9;
+
+	string classfield =10;
+
+	string family =11;
+
+	string genus =12;
+
+	string economyDate =13;
+
+	string economyTime =14;
+	
+ 	string extra = 15;
+ 	
+ 	int32 version=16;
+ 	
+ 	string udid = 17;
+  	string roleid = 18;
+}
+
+
+message GameInfoProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	string userLevel =5;
+	string gameinfo =6;
+	string value =7;
+	string kingdom =8;
+	string phylum =9;
+	string classfield =10;
+	string family =11;
+	string genus =12;
+	string gameinfoDate =13;
+	string gameinfoTime =14;
+ 	string extra = 15;
+ 	int32 version=16;
+ 	string udid = 17;
+  	string roleid = 18;
+}
+
+message MilestoneProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	/**
+	 * 里程碑的信息
+	 */
+	string milestone =5;
+
+	/**
+	 * 里程碑的相对应的值
+	 */
+	string value =6;
+
+	/**
+	 * 记录的日期 yyyy-MM-dd
+	 */
+	string milestoneDate =7;
+
+	/**
+	 * 记录的时间 HH:mm:ss
+	 */
+	string milestoneTime =8;
+ 	string extra = 9;
+ 	int32 version=10;
+ 	string udid = 11;
+  	string roleid = 12;
+}
+
+message PaymentProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	/**
+	 * 支付的金额
+	 */
+	string amount =5;
+
+	/**
+	 * 支付的货币类型
+	 */
+	string currency =6;
+
+	/**
+	 * 交易平台
+	 */
+	string provider =7;
+
+	/**
+	 * ip地址
+	 */
+	string ip =8;
+
+	/**
+	 * 交易流水号
+	 */
+	string transactionid =9;
+
+	/**
+	 * 支付的状态
+	 */
+	string status =10;
+
+	string kingdom =11;
+
+	string phylum =12;
+
+	string value2 =13;
+
+	string paymentDate =14;
+
+	string paymentTime =15;
+	
+ 	string extra = 16;
+ 	
+ 	int32 version=17;
+ 	
+ 	string udid = 18;
+  	string roleid = 19;
+}
+
+
+message AdTrackingProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	
+	string appkey =5;
+
+    string mac =6;
+
+    string macMd5 =7;
+
+    string ifa =8;
+
+    string ifaMd5 =9;
+
+    string uuid =10;
+
+    int32 actType =11;
+	/**
+	* 格式是：yyyy-MM-dd HH:mm:ss
+	**/
+	//string actDate =12;
+	
+    string actTime =13;
+
+    string pf =14;
+
+    string ip =15;
+
+    string userAgent =16;
+
+ 	string extra = 17;
+ 	
+ 	string trackingDs = 18;
+ 	
+ 	int32 version=19;
+ 	
+ 	string udid = 20;
+  	string roleid = 21;
+}
+
+message CustomBinaryBodyMetricProto {
+	//string gameId = 1;
+	string clientId = 2;
+	//string ds = 3;
+	string userId = 4;
+	
+	string customMetircName =5;
+	
+	string metricDate =6;
+
+	string metricTime =7;
+	
+	bytes body =8;
+	
+ 	string extra = 9;
+ 	
+ 	int32 version=10;
+ 	
+ 	string udid = 11;
+  	string roleid = 12;
+}
+
