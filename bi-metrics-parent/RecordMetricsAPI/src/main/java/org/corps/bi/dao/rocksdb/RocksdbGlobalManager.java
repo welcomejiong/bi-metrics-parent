@@ -128,16 +128,19 @@ public class RocksdbGlobalManager {
 		}else {
 			byte[] existVal=this.defaultMetricRocksdbImpl.get(this.getMetricProcessedFlagKey(metric));
 			if(existVal==null){
-				return ret;
+				throw new RuntimeException("tryLockProcessed for metric:"+metric+" of value is null!") ;
 			}
 			KVEntity kvEntity=new KVEntity(existVal);
 			
 			//IntEntity keyEnity=new IntEntity(kvEntity.getK());
 			LongEntity valEntity=new LongEntity(kvEntity.getV());
-			if((System.currentTimeMillis()-valEntity.getValue())>PROCESSED_FLAG_EXPIRE_MILLS) {
+			Long sysMills=System.currentTimeMillis();
+			Long diffMiss=sysMills-valEntity.getValue();
+			if((diffMiss)>PROCESSED_FLAG_EXPIRE_MILLS) {
 				this.metricProcessedDataFlagMap.get(metric).set(false);
 				this.saveProcessDataFlag(metric,false);
 			}
+			LOGGER.info("tryLockProcessed metric:{} res:{} value:{} sysMills:{} diffMiss:{}",metric,ret,valEntity.getValue(),sysMills,diffMiss);
 		}
 		return ret;
 	}

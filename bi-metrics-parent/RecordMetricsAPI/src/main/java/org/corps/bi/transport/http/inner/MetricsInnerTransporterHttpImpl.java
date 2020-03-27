@@ -169,7 +169,7 @@ public class MetricsInnerTransporterHttpImpl implements MetricsInnerTransporter 
 			try {
 				isLock=RocksdbGlobalManager.getInstance().tryLockProcessed(this.metric);
 				if(!isLock) {
-					LOGGER.info("metric:{} fetch data try lock is fail!",this.metric);
+					//LOGGER.info("metric:{} fetch data try lock is fail!",this.metric);
 					return ;
 				}
 				this.pollMetricsV2();
