@@ -162,7 +162,9 @@ public class MetricsRecordsCleanerRocksdbImpl implements MetricsRecordsCleaner{
 				
 				//this.deleteByDay(now,deleteDate);
 				
-				for (int i = 1; i <= 10; i++) {
+				int preDaysIdx=MetricsTransporterConfig.getInstance().getCleanPreDay()*2;
+				
+				for (int i = 1; i <= preDaysIdx; i++) {
 					this.deleteByDay(now,DateUtils.addDays(deleteDate,-i));
 				}
 				
