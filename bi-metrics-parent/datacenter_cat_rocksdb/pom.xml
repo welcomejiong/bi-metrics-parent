@@ -1,0 +1,203 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.corps.bi</groupId>
+		<artifactId>bi-metrics-parent</artifactId>
+		<version>8.3.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>datacenter_cat_rocksdb</artifactId>
+	<properties>
+		<projectName>datacenter_cat_rocksdb-${version}</projectName>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+	</properties>
+	<build>
+		<finalName>${projectName}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>${dir.name}/**</include>
+					<include>spring/**</include>
+					<include>messages/**</include>
+					<include>sqlmap/**</include>
+					<include>templates/**</include>
+					<include>*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>spring/appContext.xml</include>
+					<include>constant_globle.properties</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>spring/appContext.xml</include>
+					<include>spring/**</include>
+					<include>*</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>spring/appContext.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<descriptor>src/main/assembly/assembly.xml</descriptor>
+					
+					<descriptorRefs> 
+						<descriptorRef>jar-with-dependencies</descriptorRef> 
+					</descriptorRefs>
+					<archive> 
+						<manifest> 
+							<mainClass>org.corps.bi.datacenter.combine.CatRocksDbMain</mainClass> 
+						</manifest> 
+					</archive> 
+					
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-my-jar-with-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<!-- <goal>assembly</goal> -->
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+
+	</build>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>local</value>
+				</property>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<dir.name>envs/local</dir.name>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>dc</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dc</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>envs/dc</dir.name>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<projectName>cat_rocksdb_dc-${version}</projectName>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>dc02</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dc02</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>envs/dc02</dir.name>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<projectName>cat_rocksdb_dc02-${version}</projectName>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>tran</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>tran</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>envs/tran</dir.name>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<projectName>cat_rocksdb_tran-${version}</projectName>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>tran02</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>tran02</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>envs/tran02</dir.name>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<projectName>cat_rocksdb_tran02-${version}</projectName>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>game</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>game</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>envs/game</dir.name>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<projectName>cat_rocksdb_game-${version}</projectName>
+			</properties>
+		</profile>
+		
+	</profiles>
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+        
+        <dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.4</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.corps.bi</groupId>
+		  <artifactId>RecordMetricsAPI</artifactId>
+		   <version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+</project>
