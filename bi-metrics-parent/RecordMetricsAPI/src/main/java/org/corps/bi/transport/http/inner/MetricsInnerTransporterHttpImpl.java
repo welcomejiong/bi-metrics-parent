@@ -16,7 +16,7 @@ import org.corps.bi.recording.exception.TrackingException;
 import org.corps.bi.transport.MetricsInnerTransporter;
 import org.corps.bi.transport.MetricsTransporterConfig;
 import org.corps.bi.transport.http.inner.fetchdata.AbstractFetchDataThread;
-import org.corps.bi.transport.http.inner.fetchdata.FetchDataThreadV3;
+import org.corps.bi.transport.http.inner.fetchdata.FetchDataThreadV2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +100,7 @@ public class MetricsInnerTransporterHttpImpl implements MetricsInnerTransporter 
 			
 			AtomicLong processedRecordNum=this.getMetricProcessedRecordNum(metric);
 			
-			AbstractFetchDataThread fetchDataThread=new FetchDataThreadV3(metricRocksdbColumnFamily,this.transporterConfig,processedRecordNum);
+			AbstractFetchDataThread fetchDataThread=new FetchDataThreadV2(metricRocksdbColumnFamily,this.transporterConfig,processedRecordNum);
 			
 			this.threadPoolExecutor.submit(fetchDataThread);
 		}
