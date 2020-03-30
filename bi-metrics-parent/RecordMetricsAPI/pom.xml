@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>org.corps.bi</groupId>
 		<artifactId>bi-metrics-parent</artifactId>
-		<version>8.3.0-SNAPSHOT</version>
+		<version>8.4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>RecordMetricsAPI</artifactId>
 	<properties>
-		
+		<record.metric.version>8.3.0-SNAPSHOT</record.metric.version>
 	</properties>
 	<build> 
 		<finalName>RecordMetricsAPI-${project.version}</finalName>
@@ -53,19 +53,19 @@
 			<dependency>
 			  <groupId>org.corps.bi.datacenter</groupId>
 			  <artifactId>collect_metrics_core</artifactId>
-			  <version>${project.version}</version>
+			  <version>${record.metric.version}</version>
 			</dependency>
 		
 			<dependency>
 			  <groupId>org.corps.bi</groupId>
 			  <artifactId>RecordMetrics</artifactId>
-			  <version>${project.version}</version>
+			  <version>${record.metric.version}</version>
 			</dependency>
 			
 			<dependency>
 			  <groupId>org.corps.bi</groupId>
 			  <artifactId>RecordMetricsToProtoConverter</artifactId>
-			   <version>${project.version}</version>
+			   <version>${record.metric.version}</version>
 			</dependency>
 			
 			

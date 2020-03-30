@@ -25,20 +25,20 @@ import org.rocksdb.RocksDBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CatMetricsInRocksdb {
+public class CatMetricsInRocksdbV2 {
 	
-	public static Logger LOGGER =LoggerFactory.getLogger(CatMetricsInRocksdb.class.getName());
+	public static Logger LOGGER =LoggerFactory.getLogger(CatMetricsInRocksdbV2.class.getName());
 	
-	private static CatMetricsInRocksdb INSTANCE=null;
+	private static CatMetricsInRocksdbV2 INSTANCE=null;
 	
-	private CatMetricsInRocksdb() {
+	private CatMetricsInRocksdbV2() {
 		super();
 	}
 	
-	public synchronized static CatMetricsInRocksdb getInstance() {
+	public synchronized static CatMetricsInRocksdbV2 getInstance() {
 		
 		if(INSTANCE==null) {
-			INSTANCE=new CatMetricsInRocksdb();
+			INSTANCE=new CatMetricsInRocksdbV2();
 		}
 		
 		return INSTANCE;
@@ -235,14 +235,17 @@ public class CatMetricsInRocksdb {
 				hour="0"+i;
 			}
 			String hourOfDay=day+hour;
-			BytesList bylist=RocksdbCleanedGlobalManager.getInstance().getNeedCleanIds(metric, hourOfDay);
+			BytesList bylist=RocksdbCleanedGlobalManagerV2.getInstance().getNeedCleanIds(metric, hourOfDay);
 			if(bylist==null||bylist.size()<1) {
 				continue;
 			}
 			List<Long> metricSendKeyList=new ArrayList<Long>();
 			for (byte[] bs : bylist) {
-				LongEntity longEntity=new LongEntity(bs);
-				metricSendKeyList.add(longEntity.getValue());
+				KVEntity kvEntity=new KVEntity(bs);
+				LongEntity beginKeyEntity=new LongEntity(kvEntity.getK());
+				LongEntity endKeyEntity=new LongEntity(kvEntity.getV());
+				metricSendKeyList.add(beginKeyEntity.getValue());
+				metricSendKeyList.add(endKeyEntity.getValue());
 			}
 			Long minId=Collections.min(metricSendKeyList);
 			return minId;
@@ -259,14 +262,17 @@ public class CatMetricsInRocksdb {
 				hour="0"+i;
 			}
 			String hourOfDay=day+hour;
-			BytesList bylist=RocksdbCleanedGlobalManager.getInstance().getNeedCleanIds(metric, hourOfDay);
+			BytesList bylist=RocksdbCleanedGlobalManagerV2.getInstance().getNeedCleanIds(metric, hourOfDay);
 			if(bylist==null||bylist.size()<1) {
 				continue;
 			}
 			List<Long> metricSendKeyList=new ArrayList<Long>();
 			for (byte[] bs : bylist) {
-				LongEntity longEntity=new LongEntity(bs);
-				metricSendKeyList.add(longEntity.getValue());
+				KVEntity kvEntity=new KVEntity(bs);
+				LongEntity beginKeyEntity=new LongEntity(kvEntity.getK());
+				LongEntity endKeyEntity=new LongEntity(kvEntity.getV());
+				metricSendKeyList.add(beginKeyEntity.getValue());
+				metricSendKeyList.add(endKeyEntity.getValue());
 			}
 			Long maxId=Collections.max(metricSendKeyList);
 			return maxId;
@@ -294,11 +300,16 @@ public class CatMetricsInRocksdb {
 					hour="0"+i;
 				}
 				String hourOfDay=day+hour;
-				BytesList bylist=RocksdbCleanedGlobalManager.getInstance().getNeedCleanIds(metric, hourOfDay);
+				BytesList bylist=RocksdbCleanedGlobalManagerV2.getInstance().getNeedCleanIds(metric, hourOfDay);
 				if(bylist==null) {
 					continue;
 				}
-				cleanIdNum+=bylist.size();
+				for (byte[] bs : bylist) {
+					KVEntity kvEntity=new KVEntity(bs);
+					LongEntity beginKeyEntity=new LongEntity(kvEntity.getK());
+					LongEntity endKeyEntity=new LongEntity(kvEntity.getV());
+					cleanIdNum+=(endKeyEntity.getValue()-beginKeyEntity.getValue()+1);
+				}
 			}
 			
 			return cleanIdNum;
