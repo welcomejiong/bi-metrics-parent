@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.corps.bi.dao.rocksdb.MetricRocksdbColumnFamilys;
 import org.corps.bi.dao.rocksdb.RocksdbCleanedGlobalManager;
 import org.corps.bi.dao.rocksdb.RocksdbGlobalManager;
@@ -33,8 +34,8 @@ public class FetchDataThreadV2 extends  AbstractFetchDataThread{
 	
 	private static final Logger LOGGER=LoggerFactory.getLogger(FetchDataThreadV2.class);
 	
-	public FetchDataThreadV2(final MetricRocksdbColumnFamilys metricRocksdbColumnFamily,final MetricsTransporterConfig transporterConfig,final AtomicLong processedRecordNum) {
-		super(metricRocksdbColumnFamily, transporterConfig, processedRecordNum);
+	public FetchDataThreadV2(final MetricRocksdbColumnFamilys metricRocksdbColumnFamily,final MetricsTransporterConfig transporterConfig,final MutablePair<AtomicLong, AtomicLong> processedRecordNumPair) {
+		super(metricRocksdbColumnFamily, transporterConfig, processedRecordNumPair);
 	}
 	/**
 	 * 通过自增id的模式，批量获取，至少可以保证接收到的顺序和发出的顺序是一致的

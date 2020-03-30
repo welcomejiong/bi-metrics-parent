@@ -2,6 +2,8 @@ package org.corps.bi.transport.http.inner.fetchdata;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.corps.bi.core.MetricLoggerControl;
 import org.corps.bi.dao.rocksdb.MetricRocksdbColumnFamilys;
 import org.corps.bi.dao.rocksdb.RocksdbGlobalManager;
 import org.corps.bi.transport.MetricsTransporterConfig;
@@ -20,15 +22,21 @@ public abstract class AbstractFetchDataThread implements Runnable{
 	
 	protected final int batchSize;
 	
+	protected final AtomicLong fetchDataTimes;
+	
 	protected final AtomicLong processedRecordNum;
+	
+	protected final int metricLoggerPerNum;
 
-	public AbstractFetchDataThread(final MetricRocksdbColumnFamilys metricRocksdbColumnFamily,final MetricsTransporterConfig transporterConfig,final AtomicLong processedRecordNum) {
+	public AbstractFetchDataThread(final MetricRocksdbColumnFamilys metricRocksdbColumnFamily,final MetricsTransporterConfig transporterConfig,final MutablePair<AtomicLong, AtomicLong> processedRecordNumPair) {
 		super();
 		this.metricRocksdbColumnFamily=metricRocksdbColumnFamily;
 		this.transporterConfig=transporterConfig;
-		this.processedRecordNum=processedRecordNum;
+		this.fetchDataTimes=processedRecordNumPair.getLeft();
+		this.processedRecordNum=processedRecordNumPair.getRight();
 		this.metric=this.metricRocksdbColumnFamily.getMetric();
 		this.batchSize = this.transporterConfig.getBatchSize();
+		this.metricLoggerPerNum=MetricLoggerControl.parseFromName(this.metric).getPerNum();
 	}
 
 	@Override

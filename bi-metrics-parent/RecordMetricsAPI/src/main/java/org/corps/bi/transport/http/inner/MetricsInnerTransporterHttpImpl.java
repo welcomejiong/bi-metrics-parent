@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.corps.bi.dao.rocksdb.MetricRocksdbColumnFamilys;
 import org.corps.bi.recording.clients.rollfile.RollFileClient.SystemThreadFactory;
 import org.corps.bi.recording.exception.TrackingException;
@@ -61,7 +62,7 @@ public class MetricsInnerTransporterHttpImpl implements MetricsInnerTransporter 
 		
 		private final MetricsTransporterConfig transporterConfig;
 		
-		private final Map<String,AtomicLong> metricProcessedRecordNumMap=new ConcurrentHashMap<String, AtomicLong>();
+		private final Map<String,MutablePair<AtomicLong, AtomicLong>> metricProcessedRecordNumMap=new ConcurrentHashMap<String, MutablePair<AtomicLong, AtomicLong>>();
 		
 		public TriggerThread(MetricsTransporterConfig transporterConfig) {
 			super();
@@ -98,17 +99,18 @@ public class MetricsInnerTransporterHttpImpl implements MetricsInnerTransporter 
 			
 			String metric=metricRocksdbColumnFamily.getMetric();
 			
-			AtomicLong processedRecordNum=this.getMetricProcessedRecordNum(metric);
+			MutablePair<AtomicLong, AtomicLong> processedRecordNumPair=this.getMetricProcessedRecordNum(metric);
 			
-			AbstractFetchDataThread fetchDataThread=new FetchDataThreadV3(metricRocksdbColumnFamily,this.transporterConfig,processedRecordNum);
+			AbstractFetchDataThread fetchDataThread=new FetchDataThreadV3(metricRocksdbColumnFamily,this.transporterConfig,processedRecordNumPair);
 			
 			this.threadPoolExecutor.submit(fetchDataThread);
 		}
 		
-		private AtomicLong getMetricProcessedRecordNum(String metric) {
+		private MutablePair<AtomicLong, AtomicLong> getMetricProcessedRecordNum(String metric) {
 			if(!this.metricProcessedRecordNumMap.containsKey(metric)) {
-				AtomicLong tmp=new AtomicLong(0);
-				this.metricProcessedRecordNumMap.put(metric, tmp);
+				// left:处理次数  right:处理的记录数
+				MutablePair<AtomicLong, AtomicLong> mutablePair=new MutablePair<AtomicLong, AtomicLong>(new AtomicLong(0),new AtomicLong(0));
+				this.metricProcessedRecordNumMap.put(metric, mutablePair);
 			}
 			
 			return this.metricProcessedRecordNumMap.get(metric);

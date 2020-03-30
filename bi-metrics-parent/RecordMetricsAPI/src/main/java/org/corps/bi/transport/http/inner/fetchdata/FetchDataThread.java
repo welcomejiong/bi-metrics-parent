@@ -2,6 +2,7 @@ package org.corps.bi.transport.http.inner.fetchdata;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.corps.bi.dao.rocksdb.MetricRocksdbColumnFamilys;
 import org.corps.bi.dao.rocksdb.RocksdbGlobalManager;
 import org.corps.bi.dao.rocksdb.RocksdbManager;
@@ -26,8 +27,8 @@ public class FetchDataThread extends  AbstractFetchDataThread{
 	
 	private static final Logger LOGGER=LoggerFactory.getLogger(FetchDataThread.class);
 	
-	public FetchDataThread(final MetricRocksdbColumnFamilys metricRocksdbColumnFamily,final MetricsTransporterConfig transporterConfig,final AtomicLong processedRecordNum) {
-		super(metricRocksdbColumnFamily, transporterConfig, processedRecordNum);
+	public FetchDataThread(final MetricRocksdbColumnFamilys metricRocksdbColumnFamily,final MetricsTransporterConfig transporterConfig,final MutablePair<AtomicLong, AtomicLong> processedRecordNumPair) {
+		super(metricRocksdbColumnFamily, transporterConfig, processedRecordNumPair);
 	}
 	/**
 	 * @TODO
