@@ -7,7 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -15,7 +14,7 @@ import org.corps.bi.cleaner.MetricsRecordsCleaner;
 import org.corps.bi.core.Constants;
 import org.corps.bi.dao.rocksdb.MetricRocksdbColumnFamilys;
 import org.corps.bi.dao.rocksdb.RocksdbCleanedGlobalManager;
-import org.corps.bi.dao.rocksdb.RocksdbGlobalManager;
+import org.corps.bi.dao.rocksdb.RocksdbCleanedGlobalManagerV2;
 import org.corps.bi.recording.clients.rollfile.RollFileClient.SystemThreadFactory;
 import org.corps.bi.recording.exception.TrackingException;
 import org.corps.bi.transport.MetricsTransporterConfig;
@@ -134,7 +133,7 @@ public class MetricsRecordsCleanerRocksdbImpl implements MetricsRecordsCleaner{
 		public void run() {
 			boolean isLock=false;
 			try {
-				isLock=RocksdbCleanedGlobalManager.getInstance().tryLockCleaned(this.metric);
+				isLock=RocksdbCleanedGlobalManagerV2.getInstance().tryLockCleaned(this.metric);
 				if(!isLock) {
 					LOGGER.info("metric:{} clean data try lock is fail!",this.metric);
 					return ;
@@ -144,7 +143,7 @@ public class MetricsRecordsCleanerRocksdbImpl implements MetricsRecordsCleaner{
 				LOGGER.error(e.getMessage(),e);
 			}finally {
 				if(isLock) {
-					RocksdbCleanedGlobalManager.getInstance().unLockCleaned(this.metric);
+					RocksdbCleanedGlobalManagerV2.getInstance().unLockCleaned(this.metric);
 				}
 			}
 		}
@@ -162,7 +161,7 @@ public class MetricsRecordsCleanerRocksdbImpl implements MetricsRecordsCleaner{
 				
 				//this.deleteByDay(now,deleteDate);
 				
-				int preDaysIdx=MetricsTransporterConfig.getInstance().getCleanPreDay()*2;
+				int preDaysIdx=MetricsTransporterConfig.getInstance().getCleanPreDay()*5;
 				
 				for (int i = 1; i <= preDaysIdx; i++) {
 					this.deleteByDay(now,DateUtils.addDays(deleteDate,-i));
@@ -185,7 +184,9 @@ public class MetricsRecordsCleanerRocksdbImpl implements MetricsRecordsCleaner{
 						hour="0"+i;
 					}
 					String hourOfDay=day+hour;
+					// 2个版本的先同步共存一段时间
 					RocksdbCleanedGlobalManager.getInstance().delExpiredNeedCleanIds(this.metric, hourOfDay);
+					RocksdbCleanedGlobalManagerV2.getInstance().delExpiredNeedCleanIds(this.metric, hourOfDay);
 				}
 				long end=System.currentTimeMillis();
 				LOGGER.info("metric:{} now:{} delDate:{} spendMills:{}",
@@ -193,7 +194,6 @@ public class MetricsRecordsCleanerRocksdbImpl implements MetricsRecordsCleaner{
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(),e);
 			}
-			
 		}
 	}
 	

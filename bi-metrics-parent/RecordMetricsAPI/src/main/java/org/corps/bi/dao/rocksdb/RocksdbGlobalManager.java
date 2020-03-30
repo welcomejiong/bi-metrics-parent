@@ -41,7 +41,6 @@ public class RocksdbGlobalManager {
 		if(!Constants.ROCKSDB_DB_IS_READONLY) {
 			this.metricProcessedDataFlagMap=this.initProcessedDataFlags();
 		}
-		
 	}
 	
 	private byte[] getMetricGlobalIdKey(String metric) {
