@@ -197,7 +197,7 @@ public class RocksdbGlobalManager {
 		if(existVal==null) {
 			if(this.processedMetricIdGeneratorMap.containsKey(metric)) {
 				Long hisProcessId=this.processedMetricIdGeneratorMap.get(metric);
-				LOGGER.warn("the metric:{} getProcessedId of db is null but the cache is {}.so return the value of cache!",metric,hisProcessId);
+				//LOGGER.warn("the metric:{} getProcessedId of db is null but the cache is {}.so return the value of cache!",metric,hisProcessId);
 				return hisProcessId;
 			}
 			//LOGGER.warn("the metric:{} getProcessedId of db is null.so inited to 0!",metric);
