@@ -9,9 +9,9 @@ public enum MetricLoggerControl {
 	
 	INSTALL("install",1),
 	
-	COUNTER("counter",100),
+	COUNTER("counter",50),
 	
-	ECONOMY("economy",100),
+	ECONOMY("economy",20),
 	
 	GAMEINFO("gameinfo",10),
 	
@@ -19,7 +19,7 @@ public enum MetricLoggerControl {
 	
 	PAYMENT("payment",1),
 	
-	ADTRACKING("adtracking",20),
+	ADTRACKING("adtracking",10),
 	
 	CUSTOMBINARYBODYMETRIC("custombinarybodymetric",10);
 	
