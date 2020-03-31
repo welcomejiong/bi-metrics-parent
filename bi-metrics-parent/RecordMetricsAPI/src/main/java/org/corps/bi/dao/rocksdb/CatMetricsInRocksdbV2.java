@@ -82,7 +82,6 @@ public class CatMetricsInRocksdbV2 {
 	public Map<String,Object> cat(String metric) {
 		String day=DateFormatUtils.format(new Date(), Constants.DATE_FORMAT_NUM);
 		return this.getMetricMess(metric,day);
-		
 	}
 	
 	private Map<String,Object> getMetricMess(String metric,String day) {
@@ -227,7 +226,7 @@ public class CatMetricsInRocksdbV2 {
 		return null;
 	}
 	
-	private Long getSendMetricDayMinId(String metric,String day) throws Exception {
+	public Long getSendMetricDayMinId(String metric,String day) throws Exception {
 		// 1:首先当天最后一个小时的id,如果没有，一次找之前小时的
 		for (int i = 0; i <=23 ; i++) {
 			String hour=i+"";
@@ -254,7 +253,7 @@ public class CatMetricsInRocksdbV2 {
 		return null;
 	}
 	
-	private Long getSendMetricDayMaxId(String metric,String day) throws Exception {
+	public Long getSendMetricDayMaxId(String metric,String day) throws Exception {
 		// 1:首先当天最后一个小时的id,如果没有，一次找之前小时的
 		for (int i = 23; i >=0 ; i--) {
 			String hour=i+"";
@@ -281,12 +280,10 @@ public class CatMetricsInRocksdbV2 {
 		return null;
 	}
 	
-	private Map<String,Object> getMetricNeedCleanMess(String metric,String day) {
+	public Map<String,Object> getMetricNeedCleanMess(String metric,String day) {
 		Map<String,Object> ret=new 	HashMap<String,Object>();
-		for (int i = 1; i <= MetricsTransporterConfig.getInstance().getCleanPreDay(); i++) {
-			int metricAlreadySendNum=this.getMetricNeedCleanDayMess(metric,day);
-			ret.put(day, metricAlreadySendNum);
-		}
+		int metricAlreadySendNum=this.getMetricNeedCleanDayMess(metric,day);
+		ret.put(day, metricAlreadySendNum);
 		return ret;
 	}
 	

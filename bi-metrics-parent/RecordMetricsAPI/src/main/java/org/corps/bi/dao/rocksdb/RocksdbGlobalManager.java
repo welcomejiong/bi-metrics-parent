@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class RocksdbGlobalManager {
 	
-	public static Logger LOGGER =LoggerFactory.getLogger(RocksdbGlobalManager.class.getName());
+	public static Logger LOGGER =LoggerFactory.getLogger(RocksdbGlobalManager.class);
 	
 	private static final String GLOBAL_ID_KEY="global_id_key";
 	
@@ -31,13 +31,16 @@ public class RocksdbGlobalManager {
 	
 	private final Map<String,AtomicLong> metricIdGeneratorMap;
 	
+	private final Map<String,Long> processedMetricIdGeneratorMap;
+	
 	private  Map<String,AtomicBoolean> metricProcessedDataFlagMap;
 	
 	public RocksdbGlobalManager() {
 		super();
 		RocksDB rocksDB=RocksdbManager.getInstance().getRocksdb();
 		this.defaultMetricRocksdbImpl=new DefaultMetricRocksdbImpl("default",rocksDB, RocksdbManager.getInstance().getColumnFamilyHandle("default"));
-		this.metricIdGeneratorMap=this.initIdGenerators();
+		this.metricIdGeneratorMap=this.initMetricIdGenerators();
+		this.processedMetricIdGeneratorMap=this.initProcessedMetricIdGenerators();
 		if(!Constants.ROCKSDB_DB_IS_READONLY) {
 			this.metricProcessedDataFlagMap=this.initProcessedDataFlags();
 		}
@@ -56,17 +59,16 @@ public class RocksdbGlobalManager {
 	}
 	
 	
-	private Map<String,AtomicLong> initIdGenerators() {
+	private Map<String,AtomicLong> initMetricIdGenerators() {
 		Map<String,AtomicLong> ret=new ConcurrentHashMap<String,AtomicLong>();
 		for (MetricRocksdbColumnFamilys metricRocksdbColumnFamily : MetricRocksdbColumnFamilys.values()) {
 			String metric=metricRocksdbColumnFamily.getMetric();
-			ret.put(metric, this.initIdGenerator(metric));
+			ret.put(metric, this.initMetricIdGenerator(metric));
 		}
 		return ret;
-		
 	}
 	
-	private AtomicLong initIdGenerator(String metric) {
+	private AtomicLong initMetricIdGenerator(String metric) {
 		byte[] existVal=this.defaultMetricRocksdbImpl.get(this.getMetricGlobalIdKey(metric));
 		if(existVal==null) {
 			return new AtomicLong(0);
@@ -74,6 +76,25 @@ public class RocksdbGlobalManager {
 		LongEntity longEnity=new LongEntity(existVal);
 		AtomicLong tmp=new AtomicLong(longEnity.getValue());
 		return tmp;
+	}
+	
+	private Map<String,Long> initProcessedMetricIdGenerators() {
+		Map<String,Long> ret=new ConcurrentHashMap<String,Long>();
+		for (MetricRocksdbColumnFamilys metricRocksdbColumnFamily : MetricRocksdbColumnFamilys.values()) {
+			String metric=metricRocksdbColumnFamily.getMetric();
+			ret.put(metric, this.initProcessedMetricIdGenerator(metric));
+		}
+		return ret;
+	}
+	
+	private Long initProcessedMetricIdGenerator(String metric) {
+		byte[] existVal=this.defaultMetricRocksdbImpl.get(this.getMetricProcessedIdKey(metric));
+		if(existVal==null) {
+			LOGGER.warn("init the metric:{} processedId to 0!",metric);
+			return 0L;
+		}
+		LongEntity longEnity=new LongEntity(existVal);
+		return longEnity.getValue();
 	}
 	
 	private Map<String,AtomicBoolean> initProcessedDataFlags() {
@@ -163,14 +184,23 @@ public class RocksdbGlobalManager {
 		this.defaultMetricRocksdbImpl.save(this.getMetricProcessedFlagKey(metric), kvEntity.toByteArray());
 	}
 	
-	public void saveProcessedId(String metric,long id) {
+	public  synchronized void saveProcessedId(String metric,long id) {
 		LongEntity longEnity=new LongEntity(id);
 		this.defaultMetricRocksdbImpl.save(this.getMetricProcessedIdKey(metric), longEnity.toByteArray());
+		if(this.processedMetricIdGeneratorMap.containsKey(metric)) {
+			this.processedMetricIdGeneratorMap.put(metric, id);
+		}
 	}
 
 	public long getProcessedId(String metric) {
 		byte[] existVal=this.defaultMetricRocksdbImpl.get(this.getMetricProcessedIdKey(metric));
 		if(existVal==null) {
+			if(this.processedMetricIdGeneratorMap.containsKey(metric)) {
+				Long hisProcessId=this.processedMetricIdGeneratorMap.get(metric);
+				LOGGER.warn("the metric:{} getProcessedId of db is null but the cache is {}.so return the value of cache!",metric,hisProcessId);
+				return hisProcessId;
+			}
+			//LOGGER.warn("the metric:{} getProcessedId of db is null.so inited to 0!",metric);
 			return 0l;
 		}
 		LongEntity longEnity=new LongEntity(existVal);
