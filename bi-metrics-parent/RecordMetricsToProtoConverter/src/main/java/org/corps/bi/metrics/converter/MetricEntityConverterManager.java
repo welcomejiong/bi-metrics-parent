@@ -1,8 +1,5 @@
 package org.corps.bi.metrics.converter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.corps.bi.metrics.AdTracking;
 import org.corps.bi.metrics.Counter;
 import org.corps.bi.metrics.CustomBinaryBodyMetric;
@@ -275,8 +272,6 @@ public enum MetricEntityConverterManager {
 		}
 	};
 	
-	private static final Map<String,MetricEntityConverterManager> METRIC_CONVERT_MAP=new HashMap<String,MetricEntityConverterManager>();
-	
 	private final String metric;
 
 	private MetricEntityConverterManager(String metric) {
@@ -303,14 +298,13 @@ public enum MetricEntityConverterManager {
 	
 	
 	public static MetricEntityConverterManager parseFromName(String metric) {
-		if(METRIC_CONVERT_MAP.containsKey(metric)) {
-			return METRIC_CONVERT_MAP.get(metric);
-		}
 		// 如果其中一个metric没在，说明是第一次调用，则全部重新加一遍
 		for (MetricEntityConverterManager metricEntityConvert : MetricEntityConverterManager.values()) {
-			METRIC_CONVERT_MAP.put(metricEntityConvert.metric, metricEntityConvert);
+			if(metricEntityConvert.getMetric().equals(metric)) {
+				return metricEntityConvert;
+			}
 		}
-		return METRIC_CONVERT_MAP.get(metric);
+		throw new RuntimeException("the metric:"+metric+" is not defined.");
 	}
 	
 	public static byte[] keyProtobufBytes(String metric,String snId,String gameId,String ds,String extra) {

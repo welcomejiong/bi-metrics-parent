@@ -59,13 +59,13 @@
 			<dependency>
 			  <groupId>org.corps.bi</groupId>
 			  <artifactId>RecordMetrics</artifactId>
-			  <version>${record.metric.version}</version>
+			  <version>${project.version}</version>
 			</dependency>
 			
 			<dependency>
 			  <groupId>org.corps.bi</groupId>
 			  <artifactId>RecordMetricsToProtoConverter</artifactId>
-			   <version>${record.metric.version}</version>
+			   <version>${project.version}</version>
 			</dependency>
 			
 			
