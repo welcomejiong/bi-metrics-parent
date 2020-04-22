@@ -26,7 +26,7 @@ public class DauConverter extends AbstractConverter<Dau,DauProto> {
 	@Override
 	public DauProto copyTo() {
 		DauProto.Builder builder=DauProto.newBuilder();
-		super.toProto(DauProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -47,7 +47,7 @@ public class DauConverter extends AbstractConverter<Dau,DauProto> {
 
 	@Override
 	public Dau copyFrom(DauProto proto) {
-		return super.toEntity(proto,DauProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

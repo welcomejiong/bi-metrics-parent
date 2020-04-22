@@ -26,7 +26,7 @@ public class MilestoneConverter extends AbstractConverter<Milestone,MilestonePro
 	@Override
 	public MilestoneProto copyTo() {
 		MilestoneProto.Builder builder=MilestoneProto.newBuilder();
-		super.toProto(MilestoneProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -47,7 +47,7 @@ public class MilestoneConverter extends AbstractConverter<Milestone,MilestonePro
 
 	@Override
 	public Milestone copyFrom(MilestoneProto proto) {
-		return super.toEntity(proto,MilestoneProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

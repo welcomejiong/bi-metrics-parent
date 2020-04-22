@@ -1,36 +1,25 @@
 package org.corps.bi.metrics.converter;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.reflect.MethodUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.corps.bi.protobuf.ProtobufSerializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 
 public abstract class AbstractConverter<E extends Object,P extends Message> implements ProtobufSerializable<E,P>{
 	
 	private static final Logger LOGGER=LoggerFactory.getLogger(AbstractConverter.class);
 	
-	private static final Set<String> EXCLUDE_FIELDS=new HashSet<String>();
+	private static final ConcurrentHashMap<String, Field> ENTITY_FIELD_CACHE_MAP=new ConcurrentHashMap<String, Field>();
 	
-	private static final ConcurrentHashMap<String, List<String>> FIELD_CACHE_MAP=new ConcurrentHashMap<String, List<String>>();
-	
-	private static final ConcurrentHashMap<String, EntityAndProtoMethods> ENTITY_PROTO_METHOD_CACHE_MAP=new ConcurrentHashMap<String, EntityAndProtoMethods>();
-	
-	static {
-		EXCLUDE_FIELDS.add("FIELD_SEPARATOR");
-		EXCLUDE_FIELDS.add("extraCache");
-	}
+	private static final ConcurrentHashMap<String, List<Descriptors.FieldDescriptor>> METRIC_PROTO_FIELD_DESCRIPTORS=new ConcurrentHashMap<String, List<FieldDescriptor>>();
 
 	private final E entity;
 
@@ -48,225 +37,75 @@ public abstract class AbstractConverter<E extends Object,P extends Message> impl
 	public E getEntity() {
 		return entity;
 	}
-
-	protected E toEntity(P proto,Class<?> builderClazz) {
-		List<String> fieldList=this.getCurrentEntityFields(proto.getClass(),builderClazz);
-		String entityClassName=this.entity.getClass().getName();
-		EntityAndProtoMethods entityAndProtoMethods=ENTITY_PROTO_METHOD_CACHE_MAP.get(entityClassName);
-		for (String field : fieldList) {
-			ReadAndWriteMethod entityPropertyDescriptor=entityAndProtoMethods.getEntityReadAndWriteMethod(field);
-			ReadAndWriteMethod protoPropertyDescriptor=entityAndProtoMethods.getProtoReadAndWriteMethod(field);
-			if(entityPropertyDescriptor==null||protoPropertyDescriptor==null) {
-				LOGGER.warn("field:{} entityPropertyDescriptor:{} protoPropertyDescriptor:{}",field,entityPropertyDescriptor,protoPropertyDescriptor);
-				continue;
-			}
-			Method entityWriteMethod=entityPropertyDescriptor.getWriteMethod();
-			Method protoReadMethod=protoPropertyDescriptor.getReadMethod();
-			if(entityWriteMethod==null||protoReadMethod==null) {
-				LOGGER.warn("field:{} entityWriteMethod:{} protoReadMethod:{}",field,entityWriteMethod,protoReadMethod);
-				continue;
-			}
-			try {
-				Object res=protoReadMethod.invoke(proto, new Object[] {});
-				if(res==null) {
-					LOGGER.warn("field:{} readRes is null.",field);
+	
+	protected E toEntity(P proto) {
+		try {
+			final List<Descriptors.FieldDescriptor> fieldDescriptorList = this.getProtoFieldDescriptor(proto);
+			for (Descriptors.FieldDescriptor descriptor : fieldDescriptorList) {
+				Object fieldValue=proto.getField(descriptor);
+				if(fieldValue==null) {
 					continue;
 				}
-				entityWriteMethod.invoke(this.entity, res);
-			} catch (Exception e) {
-				 LOGGER.error(e.getMessage(), e);
+				Field entityField=this.getEntityField(descriptor.getName());
+				FieldUtils.writeField(entityField, this.entity, fieldValue, true);
 			}
+		} catch (IllegalAccessException e1) {
+			LOGGER.error(e1.getMessage(), e1);
 		}
 		return this.entity;
 	}
 	
-	protected void toProto(Class<?> protoClazz,com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-		List<String> fieldList=this.getCurrentEntityFields(protoClazz,builder.getClass());
-		String entityClassName=this.entity.getClass().getName();
-		EntityAndProtoMethods entityAndProtoMethods=ENTITY_PROTO_METHOD_CACHE_MAP.get(entityClassName);
-		for (String field : fieldList) {
-			ReadAndWriteMethod entityPropertyDescriptor=entityAndProtoMethods.getEntityReadAndWriteMethod(field);
-			ReadAndWriteMethod protoPropertyDescriptor=entityAndProtoMethods.getProtoReadAndWriteMethod(field);
-			if(entityPropertyDescriptor==null||protoPropertyDescriptor==null) {
-				continue;
-			}
-			Method entityReadMethod=entityPropertyDescriptor.getReadMethod();
-			Method protoWriteMethod=protoPropertyDescriptor.getWriteMethod();
-			if(entityReadMethod==null||protoWriteMethod==null) {
-				continue;
-			}
-			try {
-				Object res=entityReadMethod.invoke(this.entity, new Object[] {});
-				if(res==null) {
-					continue ;
+	protected void toProto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+		try {
+			final List<Descriptors.FieldDescriptor> fieldDescriptorList = this.getProtoFieldDescriptor(builder.getDefaultInstanceForType());
+			for (Descriptors.FieldDescriptor descriptor : fieldDescriptorList) {
+				Field entityField=this.getEntityField(descriptor.getName());
+				Object fieldValue=FieldUtils.readField(entityField, this.entity, true);
+				if(fieldValue==null) {
+					continue;
 				}
-				protoWriteMethod.invoke(builder, res);
-			} catch (Exception e) {
-				 LOGGER.error(e.getMessage(), e);
+				builder.setField(descriptor, fieldValue);
 			}
+		} catch (IllegalAccessException e1) {
+			LOGGER.error(e1.getMessage(), e1);
 		}
 	}
 	
-	private List<String> getCurrentEntityFields(Class<?> protoClazz,Class<?> builderClazz){
-		List<String> fieldList=Collections.emptyList();
-		String entityClassName=this.entity.getClass().getName();
-		if(FIELD_CACHE_MAP.containsKey(entityClassName)){
-			fieldList=FIELD_CACHE_MAP.get(entityClassName);
-		}else {
-			fieldList=new ArrayList<String>();
-			EntityAndProtoMethods entityAndProtoMethods=null;
-			if(ENTITY_PROTO_METHOD_CACHE_MAP.containsKey(entityClassName)) {
-				entityAndProtoMethods=ENTITY_PROTO_METHOD_CACHE_MAP.get(entityClassName);
-			}else {
-				entityAndProtoMethods=new EntityAndProtoMethods(entityClassName);
-				ENTITY_PROTO_METHOD_CACHE_MAP.put(entityClassName, entityAndProtoMethods);
+	private Field getEntityField(String fieldName) {
+		String key=this.entity.getClass().getName()+"."+fieldName;
+		if(ENTITY_FIELD_CACHE_MAP.containsKey(key)) {
+			return ENTITY_FIELD_CACHE_MAP.get(key);
+		}
+		Field field=FieldUtils.getField(this.entity.getClass(), fieldName, true);
+		ENTITY_FIELD_CACHE_MAP.put(key, field);
+		return field;
+	}
+	
+	private List<Descriptors.FieldDescriptor> getProtoFieldDescriptor(Message message){
+		String protoClassName=message.getClass().getName();
+		if(!METRIC_PROTO_FIELD_DESCRIPTORS.containsKey(protoClassName)) {
+			METRIC_PROTO_FIELD_DESCRIPTORS.put(protoClassName, message.getDescriptorForType().getFields());
+		}
+		return METRIC_PROTO_FIELD_DESCRIPTORS.get(protoClassName);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb=new StringBuilder(this.getClass().getName());
+		try {
+			sb.append("[").append("\n");
+			List<Field> entityFieldList=FieldUtils.getAllFieldsList(this.entity.getClass());
+			for (Field field : entityFieldList) {
+				Object fieldVal=FieldUtils.readField(field, this.entity, true);
+				sb.append(field.getName()).append(":").append(fieldVal).append("\n");
 			}
-			Class<?> tempClass = this.entity.getClass();
-			while(tempClass!=null){//当父类为null的时候说明到达了最上层的父类(Object类).
-				Field[] fields = tempClass.getDeclaredFields();
-				for (int i = 0; i < fields.length; i++) {
-				      fields[i].setAccessible(true);
-				      try {
-				    	  String filedName=fields[i].getName();
-				    	  if(EXCLUDE_FIELDS.contains(filedName)) {
-				    		  continue;
-				    	  }
-				    	  fieldList.add(filedName);
-				    	  PropertyDescriptor entityPropertyDescriptor=new PropertyDescriptor(filedName, tempClass);
-				    	  ReadAndWriteMethod entityReadAndWriteMethod=new ReadAndWriteMethod(filedName,entityPropertyDescriptor.getReadMethod(),entityPropertyDescriptor.getWriteMethod());
-				    	  entityAndProtoMethods.addEntityReadAndWriteMethod(filedName, entityReadAndWriteMethod);
-				    	  
-				    	  Method buildWriteMethod=this.getWriteMethod(filedName, builderClazz,entityPropertyDescriptor.getWriteMethod().getParameterTypes());
-				    	  Method protoReadMethod=this.getReadMethod(filedName, protoClazz);
-				    	  ReadAndWriteMethod protoReadAndWriteMethod=new ReadAndWriteMethod(filedName,protoReadMethod,buildWriteMethod);
-				    	  entityAndProtoMethods.addProtoReadAndWriteMethod(filedName, protoReadAndWriteMethod);
-				      } catch (Exception e) {
-				    	  e.printStackTrace();
-				    	  LOGGER.error(e.getMessage(), e);
-				      } 
-				}
-				tempClass=tempClass.getSuperclass();
-			}
-			
-			FIELD_CACHE_MAP.put(entityClassName, fieldList);
+			sb.append("]");
+		} catch (IllegalAccessException e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		return fieldList;
+		return sb.toString();
 	}
 	
-	/**
-     * Return a capitalized version of the specified property name.
-     *
-     * @param s The property name
-     */
-    private  String capitalizePropertyName(String s) {
-        if (s.length() == 0) {
-            return s;
-        }
-
-        char[] chars = s.toCharArray();
-        chars[0] = Character.toUpperCase(chars[0]);
-        return new String(chars);
-    }
-    
-    private Method getReadMethod(String propertyName,Class<?> clazz) {
-    	if(propertyName==null) {
-    		return null;
-    	}
-    	String baseName=this.capitalizePropertyName(propertyName);
-    	String readMethodName="get"+baseName;
-    	Method method=MethodUtils.getAccessibleMethod(clazz, readMethodName, new Class<?>[]{});
-    	if(method==null) {
-    		 method=MethodUtils.getAccessibleMethod(clazz, "is"+baseName, new Class<?>[]{});
-    	}
-    	return method;
-    }
-    
-    private Method getWriteMethod(String propertyName,Class<?> clazz,Class<?>... parameterTypes) {
-    	if(propertyName==null) {
-    		return null;
-    	}
-    	String baseName=this.capitalizePropertyName(propertyName);
-    	String writeMethodName="set"+baseName;
-    	Method method=MethodUtils.getAccessibleMethod(clazz, writeMethodName, parameterTypes);
-    	return method;
-    }
-    
-    
-    
-	
-	public static class EntityAndProtoMethods{
-		
-		private final String entityName;
-		
-		private final ConcurrentHashMap<String, ReadAndWriteMethod> entityPropertyDescriptorCache=new ConcurrentHashMap<String, ReadAndWriteMethod>();
-		
-		private final ConcurrentHashMap<String, ReadAndWriteMethod> protoPropertyDescriptorCache=new ConcurrentHashMap<String, ReadAndWriteMethod>();
-		
-		public EntityAndProtoMethods(String entityName) {
-			super();
-			this.entityName = entityName;
-		}
-
-		public String getEntityName() {
-			return entityName;
-		}
-
-		public ReadAndWriteMethod getEntityReadAndWriteMethod(String property) {
-			return this.entityPropertyDescriptorCache.get(property);
-		}
-		
-		public ReadAndWriteMethod getProtoReadAndWriteMethod(String property) {
-			return this.protoPropertyDescriptorCache.get(property);
-		}
-		
-		public void addEntityReadAndWriteMethod(String propertyName,ReadAndWriteMethod ReadAndWriteMethod) {
-			this.entityPropertyDescriptorCache.put(propertyName, ReadAndWriteMethod);
-		}
-		
-		public void addProtoReadAndWriteMethod(String propertyName,ReadAndWriteMethod ReadAndWriteMethod) {
-			this.protoPropertyDescriptorCache.put(propertyName, ReadAndWriteMethod);
-		}
-		
-		public boolean isExistEntityReadAndWriteMethod(String property) {
-			return this.entityPropertyDescriptorCache.containsKey(property);
-		}
-		
-		public boolean isExistProtoReadAndWriteMethod(String property) {
-			return this.protoPropertyDescriptorCache.containsKey(property);
-		}
-		
-	}
-	
-	public static class ReadAndWriteMethod{
-		
-		private final String property;
-		
-		private final Method readMethod;
-		
-		private final Method writeMethod;
-
-		public ReadAndWriteMethod(String property, Method readMethod, Method writeMethod) {
-			super();
-			this.property = property;
-			this.readMethod = readMethod;
-			this.writeMethod = writeMethod;
-		}
-
-		public String getProperty() {
-			return property;
-		}
-
-		public Method getReadMethod() {
-			return readMethod;
-		}
-
-		public Method getWriteMethod() {
-			return writeMethod;
-		}
-		
-		
-		
-	}
 	
 	
 }

@@ -27,7 +27,7 @@ public class CustomBinaryBodyMetricConverter extends AbstractConverter<CustomBin
 	@Override
 	public CustomBinaryBodyMetricProto copyTo() {
 		CustomBinaryBodyMetricProto.Builder builder=CustomBinaryBodyMetricProto.newBuilder();
-		super.toProto(CustomBinaryBodyMetricProto.class,builder);
+		super.toProto(builder);
 		if(this.getEntity().getBody()!=null) {
 			builder.setBody(ByteString.copyFrom(this.getEntity().getBody()));
 		}
@@ -51,7 +51,7 @@ public class CustomBinaryBodyMetricConverter extends AbstractConverter<CustomBin
 
 	@Override
 	public CustomBinaryBodyMetric copyFrom(CustomBinaryBodyMetricProto proto) {
-		CustomBinaryBodyMetric ret=super.toEntity(proto,CustomBinaryBodyMetricProto.Builder.class);
+		CustomBinaryBodyMetric ret=super.toEntity(proto);
 		if(proto.getBody()!=null) {
 			ret.setBody(proto.getBody().toByteArray());
 		}

@@ -26,7 +26,7 @@ public class MetaConverter extends AbstractConverter<Meta,MetaProto> {
 	@Override
 	public MetaProto copyTo() {
 		MetaProto.Builder builder=MetaProto.newBuilder();
-		super.toProto(MetaProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -46,7 +46,7 @@ public class MetaConverter extends AbstractConverter<Meta,MetaProto> {
 	}
 
 	public Meta copyFrom(MetaProto proto) {
-		return super.toEntity(proto,MetaProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

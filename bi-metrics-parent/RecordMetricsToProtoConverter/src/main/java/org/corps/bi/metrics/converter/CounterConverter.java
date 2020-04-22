@@ -26,7 +26,7 @@ public class CounterConverter extends AbstractConverter<Counter,CounterProto> {
 	@Override
 	public CounterProto copyTo() {
 		CounterProto.Builder builder=CounterProto.newBuilder();
-		super.toProto(CounterProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -46,7 +46,7 @@ public class CounterConverter extends AbstractConverter<Counter,CounterProto> {
 	}
 
 	public Counter copyFrom(CounterProto proto) {
-		return super.toEntity(proto,CounterProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

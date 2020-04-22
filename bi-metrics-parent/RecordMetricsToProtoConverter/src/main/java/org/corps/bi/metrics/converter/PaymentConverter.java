@@ -26,7 +26,7 @@ public class PaymentConverter extends AbstractConverter<Payment,PaymentProto> {
 	@Override
 	public PaymentProto copyTo() {
 		PaymentProto.Builder builder=PaymentProto.newBuilder();
-		super.toProto(PaymentProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -47,7 +47,7 @@ public class PaymentConverter extends AbstractConverter<Payment,PaymentProto> {
 
 	@Override
 	public Payment copyFrom(PaymentProto proto) {
-		return super.toEntity(proto,PaymentProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

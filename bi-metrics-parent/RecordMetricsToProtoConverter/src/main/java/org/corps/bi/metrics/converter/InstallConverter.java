@@ -26,7 +26,7 @@ public class InstallConverter extends AbstractConverter<Install,InstallProto> {
 	@Override
 	public InstallProto copyTo() {
 		InstallProto.Builder builder=InstallProto.newBuilder();
-		super.toProto(InstallProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -47,7 +47,7 @@ public class InstallConverter extends AbstractConverter<Install,InstallProto> {
 
 	@Override
 	public Install copyFrom(InstallProto proto) {
-		return super.toEntity(proto,InstallProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

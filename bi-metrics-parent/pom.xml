@@ -8,7 +8,6 @@
 	</parent>
 	<groupId>org.corps.bi</groupId>
 	<artifactId>bi-metrics-parent</artifactId>
-	<version>8.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>bi-metrics-parent</name>
 	<description>bi-metrics-parent</description>
@@ -278,24 +277,6 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

@@ -26,7 +26,7 @@ public class GameInfoConverter extends AbstractConverter<GameInfo,GameInfoProto>
 	@Override
 	public GameInfoProto copyTo() {
 		GameInfoProto.Builder builder=GameInfoProto.newBuilder();
-		super.toProto(GameInfoProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -46,7 +46,7 @@ public class GameInfoConverter extends AbstractConverter<GameInfo,GameInfoProto>
 	}
 
 	public GameInfo copyFrom(GameInfoProto proto) {
-		return super.toEntity(proto,GameInfoProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

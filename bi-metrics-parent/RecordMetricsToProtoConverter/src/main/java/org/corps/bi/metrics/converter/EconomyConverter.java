@@ -26,7 +26,7 @@ public class EconomyConverter extends AbstractConverter<Economy,EconomyProto> {
 	@Override
 	public EconomyProto copyTo() {
 		EconomyProto.Builder builder=EconomyProto.newBuilder();
-		super.toProto(EconomyProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -47,7 +47,7 @@ public class EconomyConverter extends AbstractConverter<Economy,EconomyProto> {
 
 	@Override
 	public Economy copyFrom(EconomyProto proto) {
-		return super.toEntity(proto,EconomyProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

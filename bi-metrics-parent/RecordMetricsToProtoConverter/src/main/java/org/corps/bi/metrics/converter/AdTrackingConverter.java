@@ -26,7 +26,7 @@ public class AdTrackingConverter extends AbstractConverter<AdTracking,AdTracking
 	@Override
 	public AdTrackingProto copyTo() {
 		AdTrackingProto.Builder builder=AdTrackingProto.newBuilder();
-		super.toProto(AdTrackingProto.class,builder);
+		super.toProto(builder);
 		return builder.build();
 	}
 
@@ -47,7 +47,7 @@ public class AdTrackingConverter extends AbstractConverter<AdTracking,AdTracking
 
 	@Override
 	public AdTracking copyFrom(AdTrackingProto proto) {
-		return super.toEntity(proto,AdTrackingProto.Builder.class);
+		return super.toEntity(proto);
 	}
 
 

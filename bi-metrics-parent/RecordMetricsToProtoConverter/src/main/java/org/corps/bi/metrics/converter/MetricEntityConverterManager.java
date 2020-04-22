@@ -301,17 +301,16 @@ public enum MetricEntityConverterManager {
 		return metric;
 	}
 	
-	static {
-		for (MetricEntityConverterManager metricEntityConvert : MetricEntityConverterManager.values()) {
-			METRIC_CONVERT_MAP.put(metricEntityConvert.metric, metricEntityConvert);
-		}
-	}
 	
 	public static MetricEntityConverterManager parseFromName(String metric) {
 		if(METRIC_CONVERT_MAP.containsKey(metric)) {
 			return METRIC_CONVERT_MAP.get(metric);
 		}
-		return null;
+		// 如果其中一个metric没在，说明是第一次调用，则全部重新加一遍
+		for (MetricEntityConverterManager metricEntityConvert : MetricEntityConverterManager.values()) {
+			METRIC_CONVERT_MAP.put(metricEntityConvert.metric, metricEntityConvert);
+		}
+		return METRIC_CONVERT_MAP.get(metric);
 	}
 	
 	public static byte[] keyProtobufBytes(String metric,String snId,String gameId,String ds,String extra) {
