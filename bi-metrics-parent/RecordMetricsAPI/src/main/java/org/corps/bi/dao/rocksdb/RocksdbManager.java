@@ -129,6 +129,7 @@ public class RocksdbManager {
 			for (Entry<String,ColumnFamilyHandle> entry : this.columnFamilyHandleMap.entrySet()) {
 				this.closeColumnFamilyHandle(entry.getValue());
 			}
+			this.rocksdb.syncWal();
 			this.rocksdb.close();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
