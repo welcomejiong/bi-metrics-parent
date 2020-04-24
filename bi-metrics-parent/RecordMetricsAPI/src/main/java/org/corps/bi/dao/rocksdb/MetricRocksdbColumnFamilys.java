@@ -44,20 +44,16 @@ public enum MetricRocksdbColumnFamilys {
 		return metricDao;
 	}
 	
-
-	static {
-		for (MetricRocksdbColumnFamilys dataCenterTopic : MetricRocksdbColumnFamilys.values()) {
-			TOPIC_METRIC_MAP.put(dataCenterTopic.metric, dataCenterTopic);
-		}
-	}
-	
 	public static MetricRocksdbColumnFamilys parseFromName(String metric) {
 		if(TOPIC_METRIC_MAP.containsKey(metric)) {
 			return TOPIC_METRIC_MAP.get(metric);
 		}
-		return null;
+		synchronized (TOPIC_METRIC_MAP) {
+			for (MetricRocksdbColumnFamilys dataCenterTopic : MetricRocksdbColumnFamilys.values()) {
+				TOPIC_METRIC_MAP.put(dataCenterTopic.metric, dataCenterTopic);
+			}
+			return TOPIC_METRIC_MAP.get(metric);
+		}
 	}
 	
-	
-
 }
