@@ -1,7 +1,7 @@
 package org.corps.bi.dao.rocksdb;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.corps.bi.dao.MetricDao;
 
@@ -25,7 +25,7 @@ public enum MetricRocksdbColumnFamilys {
 	
 	CUSTOMBINARYBODYMETRIC("custombinarybodymetric");
 	
-	private static final Map<String,MetricRocksdbColumnFamilys> TOPIC_METRIC_MAP=new HashMap<String,MetricRocksdbColumnFamilys>();
+	private static final Map<String,MetricRocksdbColumnFamilys> TOPIC_METRIC_MAP=new ConcurrentHashMap<String,MetricRocksdbColumnFamilys>();
 	
 	private final String metric;
 	
