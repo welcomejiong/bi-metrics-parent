@@ -28,6 +28,13 @@ message StorageKeyProto{
 	 int64 keyFlag=3;
 }
 
+message StorageKeyV2Proto{
+	 int64 userId=1;
+	 int64 busiFlag=2; 
+	 int64 keyFlag=3;
+	 bytes extra=4;
+}
+
 message IntProto {
 	 int32 value = 1;
 }

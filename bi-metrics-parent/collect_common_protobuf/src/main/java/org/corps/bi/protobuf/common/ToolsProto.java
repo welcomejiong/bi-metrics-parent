@@ -40,6 +40,11 @@ public final class ToolsProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_common_StorageKeyProto_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_common_StorageKeyV2Proto_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_common_StorageKeyV2Proto_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_common_IntProto_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -73,12 +78,14 @@ public final class ToolsProto {
       "ements\030\001 \003(\005\"!\n\rLongListProto\022\020\n\010element" +
       "s\030\001 \003(\003\"#\n\017StringListProto\022\020\n\010elements\030\001" +
       " \003(\t\"D\n\017StorageKeyProto\022\016\n\006userId\030\001 \001(\003\022" +
-      "\020\n\010busiFlag\030\002 \001(\003\022\017\n\007keyFlag\030\003 \001(\003\"\031\n\010In" +
-      "tProto\022\r\n\005value\030\001 \001(\005\"\032\n\tLongProto\022\r\n\005va" +
-      "lue\030\001 \001(\003\"\034\n\013StringProto\022\r\n\005value\030\001 \001(\t\"" +
-      "\037\n\007KVProto\022\t\n\001k\030\001 \001(\014\022\t\n\001v\030\002 \001(\014B,\n\034org." +
-      "corps.bi.protobuf.commonB\nToolsProtoP\001b\006" +
-      "proto3"
+      "\020\n\010busiFlag\030\002 \001(\003\022\017\n\007keyFlag\030\003 \001(\003\"U\n\021St" +
+      "orageKeyV2Proto\022\016\n\006userId\030\001 \001(\003\022\020\n\010busiF" +
+      "lag\030\002 \001(\003\022\017\n\007keyFlag\030\003 \001(\003\022\r\n\005extra\030\004 \001(" +
+      "\014\"\031\n\010IntProto\022\r\n\005value\030\001 \001(\005\"\032\n\tLongProt" +
+      "o\022\r\n\005value\030\001 \001(\003\"\034\n\013StringProto\022\r\n\005value" +
+      "\030\001 \001(\t\"\037\n\007KVProto\022\t\n\001k\030\001 \001(\014\022\t\n\001v\030\002 \001(\014B" +
+      ",\n\034org.corps.bi.protobuf.commonB\nToolsPr" +
+      "otoP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -122,26 +129,32 @@ public final class ToolsProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_common_StorageKeyProto_descriptor,
         new java.lang.String[] { "UserId", "BusiFlag", "KeyFlag", });
-    internal_static_common_IntProto_descriptor =
+    internal_static_common_StorageKeyV2Proto_descriptor =
       getDescriptor().getMessageTypes().get(5);
+    internal_static_common_StorageKeyV2Proto_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_common_StorageKeyV2Proto_descriptor,
+        new java.lang.String[] { "UserId", "BusiFlag", "KeyFlag", "Extra", });
+    internal_static_common_IntProto_descriptor =
+      getDescriptor().getMessageTypes().get(6);
     internal_static_common_IntProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_common_IntProto_descriptor,
         new java.lang.String[] { "Value", });
     internal_static_common_LongProto_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_common_LongProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_common_LongProto_descriptor,
         new java.lang.String[] { "Value", });
     internal_static_common_StringProto_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_common_StringProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_common_StringProto_descriptor,
         new java.lang.String[] { "Value", });
     internal_static_common_KVProto_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_common_KVProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_common_KVProto_descriptor,

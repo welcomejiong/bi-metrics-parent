@@ -51,5 +51,13 @@ public class Meta {
 	public void setExtra(String extra) {
 		this.extra = extra;
 	}
+	
+	public String getMetaId() {
+		StringBuilder sb=new StringBuilder(this.metric);
+		sb.append("_").append(this.snId);
+		sb.append("_").append(this.gameId);
+		sb.append("_").append(this.ds);
+		return sb.toString();
+	}
 
 }
