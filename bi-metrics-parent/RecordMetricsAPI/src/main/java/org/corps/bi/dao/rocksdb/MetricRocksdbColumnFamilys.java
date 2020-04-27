@@ -25,7 +25,7 @@ public enum MetricRocksdbColumnFamilys {
 	
 	CUSTOMBINARYBODYMETRIC("custombinarybodymetric");
 	
-	private static final Map<String,MetricRocksdbColumnFamilys> TOPIC_METRIC_MAP=new ConcurrentHashMap<String,MetricRocksdbColumnFamilys>();
+	//private static final Map<String,MetricRocksdbColumnFamilys> TOPIC_METRIC_MAP=new ConcurrentHashMap<String,MetricRocksdbColumnFamilys>();
 	
 	private final String metric;
 	
@@ -45,15 +45,16 @@ public enum MetricRocksdbColumnFamilys {
 	}
 	
 	public static MetricRocksdbColumnFamilys parseFromName(String metric) {
-		if(TOPIC_METRIC_MAP.containsKey(metric)) {
-			return TOPIC_METRIC_MAP.get(metric);
-		}
-		synchronized (TOPIC_METRIC_MAP) {
-			for (MetricRocksdbColumnFamilys dataCenterTopic : MetricRocksdbColumnFamilys.values()) {
-				TOPIC_METRIC_MAP.put(dataCenterTopic.metric, dataCenterTopic);
-			}
-			return TOPIC_METRIC_MAP.get(metric);
-		}
+		return MetricRocksdbColumnFamilys.valueOf(metric.toUpperCase());
+//		if(TOPIC_METRIC_MAP.containsKey(metric)) {
+//			return TOPIC_METRIC_MAP.get(metric);
+//		}
+//		synchronized (TOPIC_METRIC_MAP) {
+//			for (MetricRocksdbColumnFamilys dataCenterTopic : MetricRocksdbColumnFamilys.values()) {
+//				TOPIC_METRIC_MAP.put(dataCenterTopic.metric, dataCenterTopic);
+//			}
+//			return TOPIC_METRIC_MAP.get(metric);
+//		}
 	}
 	
 }
