@@ -8,7 +8,6 @@
 	</parent>
 	<artifactId>RecordMetricsAPI</artifactId>
 	<properties>
-		<record.metric.version>8.3.0-SNAPSHOT</record.metric.version>
 	</properties>
 	<build> 
 		<finalName>RecordMetricsAPI-${project.version}</finalName>
@@ -53,7 +52,7 @@
 			<dependency>
 			  <groupId>org.corps.bi.datacenter</groupId>
 			  <artifactId>collect_metrics_core</artifactId>
-			  <version>${record.metric.version}</version>
+			  <version>${project.version}</version>
 			</dependency>
 		
 			<dependency>
