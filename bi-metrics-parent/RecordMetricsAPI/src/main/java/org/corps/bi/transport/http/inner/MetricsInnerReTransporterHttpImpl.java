@@ -6,15 +6,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.corps.bi.dao.rocksdb.CatMetricsInRocksdb;
+import org.corps.bi.dao.rocksdb.CatMetricsInRocksdbV2;
 import org.corps.bi.dao.rocksdb.MetricRocksdbColumnFamilys;
 import org.corps.bi.dao.rocksdb.RocksdbGlobalManager;
 import org.corps.bi.dao.rocksdb.RocksdbManager;
@@ -186,9 +184,9 @@ public class MetricsInnerReTransporterHttpImpl implements MetricsInnerReTranspor
 				List<ColumnFamilyHandle> queryCfList=new ArrayList<ColumnFamilyHandle>();
 				final List<byte[]> keys = new ArrayList<byte[]>();
 				
-				Long beginKeyId=CatMetricsInRocksdb.getInstance().getSendMetricDayBeginProcessedId(metric, day);
+				Long beginKeyId=CatMetricsInRocksdbV2.getInstance().getSendMetricDayBeginProcessedId(metric, day);
 				if(beginKeyId==null||currentMetricId==null) {
-					LOGGER.info("metric:{} day:{} beginKeyId is null or currentMetricId is null",metric,day);
+					LOGGER.info("metric:{} day:{} beginKeyId:{} or currentMetricId {} is null",metric,day,beginKeyId,currentMetricId);
 					return ;
 				}
 						
